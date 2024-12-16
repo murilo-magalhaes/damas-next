@@ -40,3 +40,43 @@ a {
     color-scheme: dark;
   }
 }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(8, auto);
+  gap: 0;
+  padding: 1rem;
+  margin-top: 2rem;
+}
+
+.cell {
+  aspect-ratio: 1/1;
+  /* border-radius: 10px; */
+  border: 1px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 100px;
+}
+
+.cell.light {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.piece {
+  border-radius: 50%;
+  background-color: antiquewhite;
+  color: antiquewhite;
+  width: 30px;
+  aspect-ratio: 1/1;
+}
+
+.piece.dark {
+  background-color: brown;
+  color: brown;
+}
+
+.highlighted {
+  background-color: cyan;
+}
