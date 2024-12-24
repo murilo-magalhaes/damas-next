@@ -1,5 +1,6 @@
 export interface IPiece {
   id: number;
+  cell_id: number;
   color: string;
   number: number;
   letter: string;
@@ -7,7 +8,8 @@ export interface IPiece {
 
 export const emptyPiece: IPiece = {
   id: 0,
-  color: "",
+  cell_id: 0,
+  color: '',
   number: 0,
-  letter: ""
-}
+  letter: '',
+};

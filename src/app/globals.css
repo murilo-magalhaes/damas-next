@@ -1,52 +1,42 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  /* Cores do tabuleiro */
+  --cell-light-color: #f0d9b5; /* Cor clara das células */
+  --cell-dark-color: #b58863; /* Cor escura das células */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Destaque */
+  --cell-highlight-color: #00f7ff; /* Cor para destacar células */
+
+  /* Estilo das peças */
+  --piece-light-color: #ffffff; /* Cor das peças claras */
+  --piece-dark-color: #000000; /* Cor das peças escuras */
+
+  --piece-border-color: #444444; /* Cor da borda das peças */
+
+  /* Sombras */
+  --piece-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra das peças */
+  --cell-highlight-shadow: 0 0 10px rgba(0, 255, 234, 0.8); /* Sombra das células destacadas */
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  background-color: #000 !important;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+main {
+  height: 100vh;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+h1 {
+  color: #fff;
 }
 
 .board {
   display: grid;
   grid-template-columns: repeat(8, auto);
-  gap: 0;
-  padding: 1rem;
-  margin-top: 2rem;
+  height: 80vh;
+  width: 80vh;
 }
 
 .cell {
@@ -56,27 +46,49 @@ a {
   display: flex;
   justify-content: center;
   align-items: center;
-  max-width: 100px;
+  height: 100%;
+  width: 100%;
+  z-index: 0;
 }
 
 .cell.light {
-  background-color: #ffffff;
+  background-color: var(--cell-light-color);
   color: #000000;
 }
 
-.piece {
+.cell.dark {
+  background-color: var(--cell-dark-color);
+}
+
+.piece-light {
+  background-color: var(--piece-light-color);
   border-radius: 50%;
-  background-color: antiquewhite;
-  color: antiquewhite;
-  width: 30px;
-  aspect-ratio: 1/1;
+  border: 2px solid var(--piece-border-color);
+  box-shadow: var(--piece-shadow);
+  width: 60%;
+  height: 60%;
+  margin: auto;
 }
 
-.piece.dark {
-  background-color: brown;
-  color: brown;
+.piece-dark {
+  background-color: var(--piece-dark-color);
+  border-radius: 50%;
+  border: 2px solid var(--piece-border-color);
+  box-shadow: var(--piece-shadow);
+  width: 60%;
+  height: 60%;
+  margin: auto;
 }
 
-.highlighted {
-  background-color: cyan;
+.cell-highlight {
+  outline: 3px solid var(--cell-highlight-color);
+  box-shadow: var(--cell-highlight-shadow);
+  z-index: 1;
+}
+
+@media (max-width: 760px) {
+  .board {
+    width: 90vw;
+    height: 90vw;
+  }
 }
