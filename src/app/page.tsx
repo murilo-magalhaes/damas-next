@@ -2,11 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { ICell } from './dtos/ICellDTO';
-import { IPiece } from './dtos/IPieceDTO';
+import { emptyPiece, IPiece } from './dtos/IPieceDTO';
+import { EnumColor } from '@/enum/EnumColor';
 
 export default function Home() {
   const [cells, setCells] = useState<ICell[]>([]);
+
+  const [piece, setPiece] = useState<IPiece>(emptyPiece);
   const [pieces, setPieces] = useState<IPiece[]>([]);
+
   const [videoReady, setVideoReady] = useState(false);
 
   const [turn, setTurn] = useState<string>('light');
@@ -56,13 +60,20 @@ export default function Home() {
     for (let i = 8; i >= 1; i--) {
       for (let j = 1; j <= 8; j++) {
         index++;
-        cells.push({
+
+        const cell = {
           id: index,
           letter: numberToLetter(j),
           number: i,
           title: numberToLetter(j) + i.toString(),
           highlighted: false,
-        });
+          color: index % 2 === 0 ? EnumColor.DARK : EnumColor.LIGHT,
+          piece: 0,
+        };
+
+        cell.color = isDarkCell(cell) ? EnumColor.DARK : EnumColor.LIGHT;
+
+        cells.push(cell);
       }
     }
 
@@ -136,11 +147,15 @@ export default function Home() {
         let cellsAhead = [];
         if (piece.color === 'light') {
           cellsAhead = cells.filter(
-            c => c.id === cell.id - 9 || c.id === cell.id - 7,
+            c =>
+              c.color === EnumColor.DARK &&
+              (c.id === cell.id - 9 || c.id === cell.id - 7),
           );
         } else {
           cellsAhead = cells.filter(
-            c => c.id === cell.id + 9 || c.id === cell.id + 7,
+            c =>
+              c.color === EnumColor.DARK &&
+              (c.id === cell.id + 9 || c.id === cell.id + 7),
           );
         }
 
@@ -166,7 +181,7 @@ export default function Home() {
             .sort((a, b) => a.id - b.id)
             .map(c => (
               <div
-                className={`cell ${isDarkCell(c) ? 'dark' : 'light'} ${
+                className={`cell ${c.color} ${
                   c.highlighted ? 'cell-highlight' : ''
                 }`}
                 key={c.id}
