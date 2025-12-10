@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ICell } from './dtos/ICellDTO';
+import { emptyCell, ICell } from './dtos/ICellDTO';
 import { emptyPiece, IPiece } from './dtos/IPieceDTO';
-import { EnumColor } from '@/enum/EnumColor';
+import { EColor } from '@/enum/EnumColor';
 
 export default function Home() {
   const [cells, setCells] = useState<ICell[]>([]);
@@ -18,10 +18,6 @@ export default function Home() {
   useEffect(() => {
     mountBoard();
   }, []);
-
-  useEffect(() => {
-    mountPieces();
-  }, [cells]);
 
   // Adicionando controle de vídeo
   const handleVideoClick = () => {
@@ -54,50 +50,40 @@ export default function Home() {
   };
 
   const mountBoard = () => {
-    const cells: ICell[] = [];
+    const _cells: ICell[] = [];
+    const _pieces: IPiece[] = [];
 
-    let index = 0;
     for (let i = 8; i >= 1; i--) {
       for (let j = 1; j <= 8; j++) {
-        index++;
 
         const cell = {
-          id: index,
+          ...emptyCell,
+          id: _cells.length + 1,
           letter: numberToLetter(j),
           number: i,
           title: numberToLetter(j) + i.toString(),
-          highlighted: false,
-          color: index % 2 === 0 ? EnumColor.DARK : EnumColor.LIGHT,
-          piece: 0,
         };
+        cell.color = isDarkCell(cell) ? EColor.DARK : EColor.LIGHT;
 
-        cell.color = isDarkCell(cell) ? EnumColor.DARK : EnumColor.LIGHT;
+        if ((cell.number >= 6 || cell.number <= 3) && cell.color === EColor.DARK) {
+          const piece = {
+            id: _pieces.length + 1,
+            cell_id: cell.id,
+            color: cell.number >= 6 ? 'dark' : 'light',
+            letter: cell.letter,
+            number: cell.number,
+          };
+          _pieces.push(piece);
 
-        cells.push(cell);
+          cell.piece_id = piece.id;
+        }
+
+        _cells.push(cell);
       }
     }
 
-    setCells(cells);
-  };
-
-  const mountPieces = () => {
-    const pieces: IPiece[] = [];
-
-    let index = 0;
-    cells.forEach(c => {
-      if ((c.number >= 6 || c.number <= 3) && isDarkCell(c)) {
-        index++;
-        pieces.push({
-          id: index,
-          cell_id: c.id,
-          color: c.number >= 6 ? 'dark' : 'light',
-          letter: c.letter,
-          number: c.number,
-        });
-      }
-    });
-
-    setPieces(pieces);
+    setPieces(_pieces);
+    setCells(_cells);
   };
 
   const isDarkCell = (cell: ICell): boolean => {
@@ -107,7 +93,7 @@ export default function Home() {
     );
   };
 
-  const putPiece = (cell: ICell) => {
+  const renderPiece = (cell: ICell) => {
     const piece = pieces.find(
       p => p.letter === cell.letter && p.number === cell.number,
     );
@@ -125,50 +111,63 @@ export default function Home() {
   };
 
   const handleClickPiece = (piece: IPiece) => {
-    let hasHighlighted = false;
+    setPiece(piece);
 
-    pieces.forEach(p => {
-      const cell = cells.find(c => c.id === p.cell_id);
-      if (p.id !== piece.id && cell?.highlighted) {
-        hasHighlighted = true;
-        return;
+    const cell = cells.find(c => c.id === piece.cell_id);
+    if (cell) {
+
+      let freeCellsAhead = [];
+      if (piece.color === 'light') {
+        freeCellsAhead = cells.filter(
+          c =>
+            c.color === EColor.DARK &&
+            c.piece_id === 0 &&
+            (c.id === cell.id - 9 || c.id === cell.id - 7),
+        );
+      } else {
+        freeCellsAhead = cells.filter(
+          c =>
+            c.color === EColor.DARK &&
+            c.piece_id === 0 &&
+            (c.id === cell.id + 9 || c.id === cell.id + 7),
+        );
       }
-    });
 
-    if (!hasHighlighted) {
-      const cell = cells.find(c => c.id === piece.cell_id);
-
-      if (cell) {
-        let _cells = cells.filter(c => c.id !== piece.cell_id);
-        cell.highlighted = !cell.highlighted;
-
-        _cells.push(cell);
-
-        let cellsAhead = [];
-        if (piece.color === 'light') {
-          cellsAhead = cells.filter(
-            c =>
-              c.color === EnumColor.DARK &&
-              (c.id === cell.id - 9 || c.id === cell.id - 7),
-          );
-        } else {
-          cellsAhead = cells.filter(
-            c =>
-              c.color === EnumColor.DARK &&
-              (c.id === cell.id + 9 || c.id === cell.id + 7),
-          );
-        }
-
-        _cells = _cells.filter(c => !cellsAhead.find(cell => c.id === cell.id));
-
-        cellsAhead.forEach(c => {
-          c.highlighted = !c.highlighted;
-          _cells.push(c);
-        });
-
-        setCells(_cells);
-      }
+      setCells(prev => prev.map(c => ({
+        ...c,
+        highlighted: freeCellsAhead.length !== 0 && c.id === cell.id || freeCellsAhead.some(_c => _c.id === c.id),
+      })));
     }
+  };
+
+  const unHighlightedAllCells = () => {
+    setCells(prev => prev.map(cell => ({ ...cell, highlighted: false })));
+    // return cells.map(cell => ({...cell, highlighted: false}))
+  };
+
+  const handleClickCell = (cell: ICell) => {
+    console.log('Célula clicada', cell.letter, cell.number);
+    if (cell.highlighted && piece.cell_id !== cell.id) {
+      console.log('Mover peça');
+      const oldCellId = piece.cell_id;
+      const pieceMoved = {
+        ...piece,
+        cell_id: cell.id,
+        letter: cell.letter,
+        number: cell.number,
+      };
+      setPieces(prev => prev.map(p => p.id === pieceMoved.id ? pieceMoved : p));
+      setPiece(emptyPiece);
+
+      setCells(prev => prev
+        .map(c =>
+          c.id === cell.id
+            ? { ...c, piece_id: pieceMoved.id }
+            : c.id === oldCellId
+              ? { ...c, piece_id: 0,
+        } : c));
+    }
+    ;
   };
 
   return (
@@ -186,8 +185,9 @@ export default function Home() {
                 }`}
                 key={c.id}
                 id={`cell-${c.id}`}
+                onClick={() => handleClickCell(c)}
               >
-                {putPiece(c)}
+                {renderPiece(c)}
               </div>
             ))}
         </div>

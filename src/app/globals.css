@@ -4,7 +4,7 @@
   --cell-dark-color: #b58863; /* Cor escura das células */
 
   /* Destaque */
-  --cell-highlight-color: #00f7ff; /* Cor para destacar células */
+  --cell-highlight-color: #003cff; /* Cor para destacar células */
 
   /* Estilo das peças */
   --piece-light-color: #ffffff; /* Cor das peças claras */
@@ -14,7 +14,7 @@
 
   /* Sombras */
   --piece-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra das peças */
-  --cell-highlight-shadow: 0 0 10px rgba(0, 255, 234, 0.8); /* Sombra das células destacadas */
+  --cell-highlight-shadow: 0 0 10px rgba(0, 42, 255, 0.8); /* Sombra das células destacadas */
 }
 
 html,

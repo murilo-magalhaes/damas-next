@@ -1,4 +1,4 @@
-import { EnumColor } from '@/enum/EnumColor';
+import { EColor } from '@/enum/EnumColor';
 
 export interface ICell {
   id: number;
@@ -6,7 +6,7 @@ export interface ICell {
   number: number;
   letter: string;
   highlighted: boolean;
-  color: EnumColor;
+  color: EColor;
   piece_id: number;
 }
 
@@ -17,5 +17,5 @@ export const emptyCell: ICell = {
   number: 0,
   letter: '',
   highlighted: false,
-  color: EnumColor.DARK,
+  color: EColor.DARK,
 };
