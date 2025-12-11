@@ -13,7 +13,7 @@ export default function Home() {
 
   const [videoReady, setVideoReady] = useState(false);
 
-  const [turn, setTurn] = useState<string>('light');
+  const [turn, setTurn] = useState<EColor>(EColor.LIGHT);
 
   useEffect(() => {
     mountBoard();
@@ -110,7 +110,12 @@ export default function Home() {
     return null;
   };
 
+  const switchTurn = () => {
+    setTurn(prev => prev === EColor.LIGHT ? EColor.DARK : EColor.LIGHT);
+  }
+
   const handleClickPiece = (piece: IPiece) => {
+    if(turn !== piece.color) return;
     setPiece(piece);
 
     const cell = cells.find(c => c.id === piece.cell_id);
@@ -140,6 +145,27 @@ export default function Home() {
     }
   };
 
+  const hasAvailableMove = (cell: ICell): boolean => {
+    if (cell.piece_id === 0) return false;
+    const piece = pieces.find(p => p.id === cell.piece_id);
+    if(piece) {
+      if(turn === EColor.LIGHT && piece.color === EColor.LIGHT && cells.filter(
+        c =>
+          c.color === EColor.DARK &&
+          c.piece_id === 0 &&
+          (c.id === cell.id - 9 || c.id === cell.id - 7),
+      ).length > 0) return true;
+
+      if(turn === EColor.DARK && piece.color === EColor.DARK && cells.filter(
+        c =>
+          c.color === EColor.DARK &&
+          c.piece_id === 0 &&
+          (c.id === cell.id + 9 || c.id === cell.id + 7),
+      ).length > 0) return true;
+    }
+    return false;
+  }
+
   const unHighlightedAllCells = () => {
     setCells(prev => prev.map(cell => ({ ...cell, highlighted: false })));
     // return cells.map(cell => ({...cell, highlighted: false}))
@@ -162,12 +188,13 @@ export default function Home() {
       setCells(prev => prev
         .map(c =>
           c.id === cell.id
-            ? { ...c, piece_id: pieceMoved.id }
+            ? { ...c, piece_id: pieceMoved.id, highlighted: false }
             : c.id === oldCellId
-              ? { ...c, piece_id: 0,
-        } : c));
+              ? { ...c, piece_id: 0, highlighted: false }
+              : {...c, highlighted: false }));
+
+      switchTurn()
     }
-    ;
   };
 
   return (
@@ -175,14 +202,14 @@ export default function Home() {
       <h1 className="w-full text-center pt-8">Damas</h1>
 
       <div className="container d-flex justify-content-center align-items-center">
-        <div className="board">
+        <div className={`board ${turn === EColor.DARK ? 'rotated' : ''}`}>
           {cells
             .sort((a, b) => a.id - b.id)
             .map(c => (
               <div
                 className={`cell ${c.color} ${
                   c.highlighted ? 'cell-highlight' : ''
-                }`}
+                } ${hasAvailableMove(c) ? 'has-available-move' : ''}`}
                 key={c.id}
                 id={`cell-${c.id}`}
                 onClick={() => handleClickCell(c)}

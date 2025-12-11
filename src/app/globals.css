@@ -1,94 +1,115 @@
 :root {
-  /* Cores do tabuleiro */
-  --cell-light-color: #f0d9b5; /* Cor clara das células */
-  --cell-dark-color: #b58863; /* Cor escura das células */
+    /* Cores do tabuleiro */
+    --cell-light-color: #f0d9b5; /* Cor clara das células */
+    --cell-dark-color: #b58863; /* Cor escura das células */
 
-  /* Destaque */
-  --cell-highlight-color: #003cff; /* Cor para destacar células */
+    /* Destaque */
+    --cell-highlight-color: #003cff; /* Cor para destacar células */
 
-  /* Estilo das peças */
-  --piece-light-color: #ffffff; /* Cor das peças claras */
-  --piece-dark-color: #000000; /* Cor das peças escuras */
+    /* Estilo das peças */
+    --piece-light-color: #ffffff; /* Cor das peças claras */
+    --piece-dark-color: #000000; /* Cor das peças escuras */
 
-  --piece-border-color: #444444; /* Cor da borda das peças */
+    --piece-border-color: #444444; /* Cor da borda das peças */
 
-  /* Sombras */
-  --piece-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra das peças */
-  --cell-highlight-shadow: 0 0 10px rgba(0, 42, 255, 0.8); /* Sombra das células destacadas */
+    /* Sombras */
+    --piece-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Sombra das peças */
+    --cell-highlight-shadow: 0 0 10px rgba(0, 42, 255, 0.8); /* Sombra das células destacadas */
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #000 !important;
+    margin: 0;
+    padding: 0;
+    background-color: #000 !important;
 }
 
 main {
-  height: 100vh;
+    height: 100vh;
 }
 
 h1 {
-  color: #fff;
+    color: #fff;
 }
 
 .board {
-  display: grid;
-  grid-template-columns: repeat(8, auto);
-  height: 80vh;
-  width: 80vh;
+    display: grid;
+    grid-template-columns: repeat(8, auto);
+    height: 80vh;
+    width: 80vh;
+    transition: transform 0.5s ease-in-out;
+}
+
+.rotated {
+    transform: rotate(180deg);
+}
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(90deg);
+    }
+    100% {
+        transform: rotate(90deg);
+    }
 }
 
 .cell {
-  aspect-ratio: 1/1;
-  /* border-radius: 10px; */
-  border: 1px solid #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-  z-index: 0;
+    aspect-ratio: 1/1;
+    /* border-radius: 10px; */
+    border: 1px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
 }
 
 .cell.light {
-  background-color: var(--cell-light-color);
-  color: #000000;
+    background-color: var(--cell-light-color);
+    color: #000000;
 }
 
 .cell.dark {
-  background-color: var(--cell-dark-color);
+    background-color: var(--cell-dark-color);
 }
 
 .piece-light {
-  background-color: var(--piece-light-color);
-  border-radius: 50%;
-  border: 2px solid var(--piece-border-color);
-  box-shadow: var(--piece-shadow);
-  width: 60%;
-  height: 60%;
-  margin: auto;
+    background-color: var(--piece-light-color);
+    border-radius: 50%;
+    border: 2px solid var(--piece-border-color);
+    box-shadow: var(--piece-shadow);
+    width: 60%;
+    height: 60%;
+    margin: auto;
 }
 
 .piece-dark {
-  background-color: var(--piece-dark-color);
-  border-radius: 50%;
-  border: 2px solid var(--piece-border-color);
-  box-shadow: var(--piece-shadow);
-  width: 60%;
-  height: 60%;
-  margin: auto;
+    background-color: var(--piece-dark-color);
+    border-radius: 50%;
+    border: 2px solid var(--piece-border-color);
+    box-shadow: var(--piece-shadow);
+    width: 60%;
+    height: 60%;
+    margin: auto;
 }
 
 .cell-highlight {
-  outline: 3px solid var(--cell-highlight-color);
-  box-shadow: var(--cell-highlight-shadow);
-  z-index: 1;
+    outline: 3px solid var(--cell-highlight-color);
+    box-shadow: var(--cell-highlight-shadow);
+    z-index: 1;
 }
 
 @media (max-width: 760px) {
-  .board {
-    width: 90vw;
-    height: 90vw;
-  }
+    .board {
+        width: 90vw;
+        height: 90vw;
+    }
+}
+
+.has-available-move {
+    background-color: #F2D066 !important;
 }
